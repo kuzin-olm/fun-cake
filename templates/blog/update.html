@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit "{{ recipe.name }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<main>
+  <section class="container text-center">
+  </section>
+
+  <div class="container">
+    <h1 class="h1 text-center">Редактирование рецепта <br>'{{ recipe.name | truncate(40) }}'</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith  %}
+    <form action="{{ url_for('blog.update', id=recipe.id) }}" method="post" enctype="multipart/form-data" class="was-validated">
+
+      <div class="mb-3">
+        <label for="inputTitle" class="form-label">
+          <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+          Название рецепта/торта
+        </label>
+        <input name="title" type="text" class="form-control" id="inputTitle" placeholder="Заголовок" value="{{ request.form['title'] or recipe.name }}" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="inputAbout" class="form-label">
+          <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+          Краткое описание для превью
+        </label>
+        <textarea name="about" class="form-control" id="inputAbout" rows="5" placeholder="Коротко о главном" required>{{ request.form['about'] or recipe.text_about}}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="inputRecipe" class="form-label">
+          <img src="{{ url_for('static', filename='imgs/eye_hide.png') }}" alt="" width="17" height="10">
+          Рецепт
+        </label>
+        <textarea name="body" class="form-control" id="inputRecipe" rows="16" placeholder="Подробности о рецепте" required>{{ request.form['body'] or recipe.text_recipe }}</textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-4 mb-3">
+          <label for="forPrewImage" class="form-label">
+            <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+            Превью (главное фото)
+          </label>
+          <input name="prew_image" type="file" class="form-control" id="forPrewImage" accept="image/*">
+        </div>
+
+        <div class="col-xl-4 mb-3">
+          <label for="forOtherImages" class="form-label">
+            <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+            Дополнительные фото
+          </label>
+          <input name="other_image" type="file" class="form-control" id="forOtherImages" accept="image/*" multiple>
+        </div>
+
+        <div class="col-xl-4 mb-3">
+          <label for="forDocs" class="form-label">
+            <img src="{{ url_for('static', filename='imgs/eye_hide.png') }}" alt="" width="17" height="10">
+            Документы
+          </label>
+          <input name="docs_file" type="file" class="form-control" id="forDocs" accept=".doc,.docx,.pdf" multiple>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-4 mb-3">
+          <div class="form-floating">
+            <select name="to_trade" class="form-select" id="stateTrade" aria-label="">
+              <option {% if recipe.to_trade %}selected{% endif %} value="0">Не выставлять</option>
+              <option {% if recipe.to_trade %}selected{% endif %} value="1">Выставить</option>
+            </select>
+            <label for="stateTrade">Выставить, чтоб видели все?</label>
+          </div>
+        </div>
+
+        <div class="col-xl-4 mb-3">
+          <div class="form-floating">
+            <input name="profit" type="text" class="form-control" id="profitRecipe" value="{{ recipe.profit }}" required>
+            <label for="profitRecipe">Профит с продажи, т.е. price x N, где N =</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-4">
+        <a href="{{ url_for('blog.view', id=recipe.id) }}" class="btn btn-outline-secondary m-1"><< Назад</a>
+        <input class="btn btn-success" type="submit" value="Сохранить">
+        <a href="{{ url_for('blog.delete', id=recipe.id) }}" class="btn btn-outline-danger m-1" onclick="return confirm('Are you sure?');">Удалить</a>
+      </div>
+    </form>
+
+    <hr>
+    <table class="table table-striped caption-top table-responsive-sm" id="composite_table">
+        <caption>Список ингредиентов</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col" colspan="2">Группы</th>
+            <th scope="col" colspan="1"><button type="button" class="btn btn-sm btn-outline-primary m-1" data-bs-toggle="modal" data-bs-target="#addGroupModal">Добавить группу</button></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for group in recipe.list_group|sort(attribute='name') %}
+          <tr id="group-layer-{{ group.id }}">
+            <td colspan="2"><strong> {{ group.name }} (диаметр: {{ group.diameter }}) </strong></td>
+            <td colspan="1">
+              <a href="{{ url_for('ingredient.newconsistency', recipe_id=recipe.id, group_id=group.id) }}" class="btn btn-sm btn-outline-primary m-1">добавить ингредиент</a>
+              <a href="{{ url_for('blog.edit_type_consistency', recipe_id=recipe.id, group_id=group.id) }}" class="btn btn-sm btn-outline-secondary m-1">изм. диаметр</a>
+              <a href="{{ url_for('blog.delete_type_consistency', recipe_id=recipe.id, group_id=group.id) }}" class="btn btn-sm btn-outline-danger m-1" onclick="return confirm('точно точно удалить группу?');">удалить группу</a>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="3">
+
+              <table class="table table-hover mb-0">
+                <tbody>
+                  <tr>
+                    <td scope="col">Название</td>
+                    <td scope="col">Необходимо</td>
+                    <td scope="col"></td>
+                  </tr>
+                  {% for ing_con in group.ingredient_consistency %}
+                  <tr>
+                    <td>{{ ing_con.ingredient.name }}</td>
+                    <td>{{ ing_con.qty }} {{ ing_con.ingredient.measurement.name }}</td>
+                    <td>
+                      <a href="{{ url_for('ingredient.editconsistency', recipe_id=recipe.id, ingr_con_id=ing_con.id) }}" class="btn btn-sm btn-outline-secondary m-1">изм</a>
+                      <a href="{{ url_for('ingredient.delconsistency', recipe_id=recipe.id, ingr_con_id=ing_con.id) }}" class="btn btn-sm btn-outline-danger m-1">дел</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+            </td>
+          </tr>
+
+        {% endfor %}
+        </tbody>
+      </table>
+
+    <div class="my-4">
+      <a href="{{ url_for('blog.view', id=recipe.id) }}" class="btn btn-outline-secondary m-1"><< Назад</a>
+    </div>
+  </div>
+
+
+
+  <section class="container text-center">
+  </section>
+</main>
+
+
+<div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Новая группа</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{{ url_for('blog.add_type_consistency') }}" method="post">
+        <div class="modal-body">
+
+          <div class="form-floating mb-2">
+            <input name="consistency_type_name" type="text" class="form-control" id="floatingNameGroup" required>
+            <label for="floatingNameGroup">Название</label>
+          </div>
+
+          <div class="form-floating mb-2">
+            <select name="input_template_group_id" class="form-select" id="floatingTemplateGroup" aria-label="" required>
+              <option selected value="0">не использовать шаблон</option>
+              {% for template_group in templates_group | sort(attribute='name') %}
+              <option value="{{ template_group.id }}">{{ template_group.name }}</option>
+              {% endfor %}
+            </select>
+            <label for="floatingTemplateGroup">Шаблон</label>
+          </div>
+
+          <div class="form-floating mb-1">
+            <input name="consistency_type_diameter" type="text" class="form-control" id="floatingDiameterGroup" value="18" required>
+            <label for="floatingDiameterGroup">Диаметр</label>
+          </div>
+
+          <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+
+        </div>
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-success" value="Добавить">
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Ingredients{% endblock %}</h1>
+<!--  {% if g.user %}-->
+<!--    <a class="action" href="{{ url_for('blog.create') }}">New</a>-->
+<!--  {% endif %}-->
+{% endblock %}
+
+
+{% block content %}
+<main>
+  <section class="container text-center">
+  </section>
+
+  <div class="container">
+
+    <div class="row align-items-center mb-5">
+      <div class="col-8">
+        <p class="h3 text-center">Обновление ингредиента</p>
+      </div>
+      <div class="col-4">
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addMassModal">Добавить ед.изм.</button>
+      </div>
+    </div>
+
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-danger" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    <form action="{{ url_for('ingredient.update', id=ingredient.id) }}" method="post">
+
+      <div class="form-floating mb-2">
+        <input name="input_name" type="text" class="form-control" id="floatingNameIngredient" value="{{ request.form['input_name'] or ingredient.name }}" required>
+        <label for="floatingNameIngredient">Имя мое любимое твое</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input name="input_packing" type="text" class="form-control" id="floatingPackingIngredient" value="{{ request.form['input_packing'] or ingredient.packing }}" required>
+        <label for="floatingPackingIngredient">Фасовка</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <select name="input_mass" class="form-select" id="floatingMassIngredient" aria-label="" required>
+          {% for measure in measurement %}
+          <option {% if measure.name == ingredient.measurement.name %}selected{% endif %} value="{{ measure.id }}">{{ measure.name }}</option>
+          {% endfor %}
+        </select>
+        <label for="floatingMassIngredient">Единица измерения</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input name="input_price" type="text" class="form-control" id="floatingPriceIngredient" value="{{ request.form['input_price'] or ingredient.price }}" required>
+        <label for="floatingPriceIngredient">Цена</label>
+      </div>
+
+      <a href="{{ url_for('ingredient.index') }}" class="btn btn-outline-secondary"><< Назад</a>
+      <input type="submit" class="btn btn-success" value="Изменить">
+    </form>
+  </div>
+
+<section class="container text-center">
+</section>
+
+</main>
+
+
+
+
+
+<div class="modal fade" id="addMassModal" tabindex="-1" aria-labelledby="ModalLabelMass" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabelMass">Новая единица измерения</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{{ url_for('ingredient.newmass') }}" method="post">
+        <div class="modal-body">
+
+          <div class="form-floating mb-1">
+            <input name="input_name_mass" type="text" class="form-control" id="floatingNameMass" required>
+            <label for="floatingNameMass">Название единицы</label>
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-success" value="Добавить">
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base_auth.html' %}
+
+{% block header %}
+  <h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+
+    <div class="col-xl-4 offset-xl-4">
+      <a class="navbar-brand" href="{{ url_for('blog.index') }}">
+        <img class="mb-4" src="{{ url_for('static', filename='imgs/cake_logo.png') }}" alt="" width="72" height="57">
+      </a>
+      <h1 class="h3 mb-3 fw-normal">Авторизация</h1>
+    </div>
+
+    <div class="col-xl-4 offset-xl-4 form-floating mt-2">
+      <input type="text" class="form-control" id="inputUsername" placeholder="username" name="username" value="{{ request.form['username'] }}">
+      <label for="inputUsername">Имя пользователя</label>
+    </div>
+
+    <div class="col-xl-4 offset-xl-4 form-floating mb-2">
+      <input type="password" class="form-control" id="inputPassword" placeholder="password" name="password">
+      <label for="inputPassword">Пароль</label>
+    </div>
+
+    <div class="col-xl-4 offset-xl-4">
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+    </div>
+
+  </form>
+{% endblock %}

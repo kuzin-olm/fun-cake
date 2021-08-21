@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}"{{ recipe.name }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<main>
+  <section class="container text-center">
+  </section>
+  {% set messages = get_flashed_messages(with_categories=true) %}
+
+  {% if messages %}
+    <div class="container-xl mt-5">
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+    </div>
+  {% endif  %}
+
+
+  {% if not messages %}
+  <div class="container-xl mt-5">
+
+    <h4 class="mb-3">Рецепт</h4>
+    <p class="mb-4">{{ recipe.text_recipe.replace('\n', ' <br>')|safe }}</p>
+
+    {% if docs_file|length > 0 %}
+    <div class="mb-3">
+      <h5>Документы</h5>
+      {% for url_doc, name_doc in docs_file %}
+        <div class="row">
+          <div class="col">
+            <a href="{{ url_doc }}" class="link-primary">{{ name_doc }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="button" class="btn btn-sm btn-outline-secondary my-2" data-bs-toggle="modal" data-bs-target="#restructDiameter">изменить диаметр и пересчитать ингредиенты</button>
+    <div class="accordion accordion-flush" id="accordionFlushTable">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingOne">
+          <button class="accordion-button collapsed btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+            <strong>Список ингредиентов</strong>
+          </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushTable">
+          <div class="accordion-body table-responsive">
+
+            <table class="table table-striped caption-top table-responsive">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" colspan="5">Группы</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% set total_cost = [] %}
+              {% set total_cost_group = [] %}
+              {% set total_cost_full = [] %}
+
+              {% for group in recipe.list_group | sort(attribute='name') %}
+                {% set coef_diameter = new_diameter[group.id | string ]**2 / group.diameter**2 %}
+                {% set total_cost_group = [] %}
+                <tr>
+                  <td colspan="4"><strong> {{ group.name }} (диаметер: {{ new_diameter[group.id | string] }})</strong></td>
+                </tr>
+                <tr>
+                  <td colspan="4">
+                    <table class="table table-hover mb-0">
+                      <tbody>
+                        <tr>
+                          <td scope="col">Название</td>
+                          <td scope="col">Необходимо</td>
+                          <td scope="col">Цена</td>
+                        </tr>
+                        {% for ing_con in group.ingredient_consistency | sort(attribute='ingredient.name') %}
+                        <tr>
+                          <td>{{ ing_con.ingredient.name }}</td>
+                          <td>{{ '%0.2f' | format(ing_con.qty * coef_diameter) }} {{ ing_con.ingredient.measurement.name }}</td>
+                          {% if ing_con.ingredient %}
+                            {% set cost = ing_con.ingredient.price / ing_con.ingredient.packing * ing_con.qty * coef_diameter %}
+                            {% if total_cost_group.append(cost) %}{% endif %}
+                            <td>{{ '%0.2f' | format(cost) }}</td>
+                          {% else %}
+                            <td>0</td>
+                          {% endif %}
+                        </tr>
+                        {% endfor %}
+
+
+                        {% set total_cost_group = total_cost_group | sum %}
+                        {% if total_cost.append(total_cost_group) %}{% endif %}
+                        <tr class="">
+                          <td colspan="2">Стоимость ингредиентов</td>
+                          <td>{{ '%0.2f' | format(total_cost_group) }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+              {% for group in recipe.composition|groupby(attribute='ingredient_type.id') %}
+
+                {% set ing_con =  group.list| first %}
+                {% set coef_diameter = new_diameter[ing_con.ingredient_type_id | string]**2 / ing_con.ingredient_type.diameter**2 %}
+
+                {% set ingredient_qty = [] %}
+
+                {% for ingcon in group.list %}
+                  {% if ingredient_qty.append(ingcon.qty * coef_diameter) %}{% endif %}
+                {% endfor %}
+
+                {% set ingredient_qty = ingredient_qty | sum %}
+                {% if total_cost_full.append(ingredient_qty) %}{% endif %}
+
+              {% endfor %}
+
+              {% set total_cost = total_cost | sum %}
+              {% set total_cost_full = total_cost_full | sum %}
+              <tfoot>
+                <tr class="table-light">
+                  <td colspan="3">Стоимость ингредиентов</td>
+                  <td>{{ '%0.2f' | format(total_cost) }}</td>
+                  <!--<td>{{ '%0.2f' | format(total_cost_full) }}</td>-->
+                </tr>
+                <tr class="table-light">
+                  <td colspan="3">Стоимость с учетом трудозатрат (x {{ recipe.profit }})</td>
+                  <td colspan="1">{{ '%0.2f' | format(total_cost * recipe.profit) }}</td>
+                  <!--<td>{{ '%0.2f' | format(total_cost_full * recipe.profit) }}</td>-->
+                </tr>
+                <tr class="table-light">
+                  <td colspan="3">Приблизительный суммарный вес</td>
+                  <td colspan="1">{{ total_cost_full | int }} грамм</td>
+                  <!--<td>{{ '%0.2f' | format(total_cost_full * recipe.profit) }}</td>-->
+                </tr>
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingTwo">
+          <button class="accordion-button collapsed btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseOne">
+            <strong>Список покупок</strong>
+          </button>
+        </h2>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushTable">
+          <div class="accordion-body table-responsive">
+
+            <table class="table table-sm table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Название</th>
+                  <th scope="col">Необходимо</th>
+                  <th scope="col">Фасовка</th>
+                  <th scope="col">Кол-во</th>
+                  <th scope="col">Цена</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% set total_ingredient_cost = [] %}
+              {% for group in recipe.composition|groupby(attribute='ingredient.name') %}
+
+                {% set ing_con =  group.list| first %}
+
+                {% set ingredient_qty_sum = [] %}
+                {% for ingcon in group.list %}
+                  {% set coef_diameter = new_diameter[ingcon.ingredient_type_id | string]**2 / ingcon.ingredient_type.diameter**2 %}
+                  {% if ingredient_qty_sum.append(ingcon.qty * coef_diameter) %}{% endif %}
+                {% endfor %}
+
+                {% set ingredient_qty_sum = ingredient_qty_sum | sum %}
+                {% set full_cost_ing = (ingredient_qty_sum / ing_con.ingredient.packing + 0.4999)|round * ing_con.ingredient.price %}
+
+                {% if total_ingredient_cost.append(full_cost_ing) %}{% endif %}
+
+                <tr>
+                  <td>{{ group.grouper }}</td>
+                  <td>{{ '%0.2f' | format(ingredient_qty_sum) }} {{ ing_con.ingredient.measurement.name }}</td>
+                  <td>{{ ing_con.ingredient.packing }} {{ ing_con.ingredient.measurement.name }}</td>
+                  <td>{{ (ingredient_qty_sum / ing_con.ingredient.packing + 0.4999)|round }}</td>
+                  <td>{{ '%0.2f' | format(full_cost_ing) }}</td>
+                </tr>
+
+              {% endfor %}
+              {% set total_ingredient_cost = total_ingredient_cost | sum %}
+              </tbody>
+              <tfoot>
+                <tr class="table-light">
+                  <td colspan="4">Стоимость ингредиентов</td>
+                  <td>{{ '%0.2f' | format(total_ingredient_cost ) }}</td>
+                </tr>
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="container-xl my-5">
+    <div class="row">
+      <div class="col">
+        <a href="{{ url_for('blog.index', _anchor='recipe-{}'.format(recipe.id) ) }}" class="btn btn-outline-secondary m-1"><< На главную</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="restructDiameter" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabel">Необходимо указать новые диаметры</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <form action="{{ url_for('blog.restruct_diameter', id=recipe.id) }}" method="post" target="_blank">
+          <div class="modal-body">
+
+            {% for group in recipe.list_group | sort(attribute='name') %}
+            <div class="form-floating mb-2">
+              <input name="inputgroup-{{ group.id }}" type="text" class="form-control" id="floatingNameGroup" value="14" required>
+              <label for="floatingNameGroup">{{ group.name }}, см</label>
+            </div>
+            {% endfor %}
+
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-success" value="Пересчитать">
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+
+  <section class="container text-center mt-5">
+  </section>
+
+</main>
+{% endblock %}

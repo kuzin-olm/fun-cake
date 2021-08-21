@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Ingredient Consistency{% endblock %}</h1>
+<!--  {% if g.user %}-->
+<!--    <a class="action" href="{{ url_for('blog.create') }}">New</a>-->
+<!--  {% endif %}-->
+{% endblock %}
+
+
+{% block content %}
+<main>
+  <section class="container text-center">
+  </section>
+
+  <div class="container">
+
+    <div class="row align-items-center mb-5">
+      <div class="col">
+        <p class="h3 text-center">Редактирование консистенции ингредиента для рецепта {{ recipe.name | truncate(40) }}</p>
+      </div>
+    </div>
+
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-danger" role="alert">
+        {{ message | safe }}
+      </div>
+    {% endfor %}
+
+    <form action="{{ url_for('ingredient.editconsistency', recipe_id=recipe.id, ingr_con_id=ingr_con.id) }}" method="post">
+
+      <div class="form-floating mb-2">
+        <select name="input_ingredient_type_id" class="form-select" id="floatingNameGroupType" aria-label="" required>
+          {% for ingredient_type in ingredient_types | sort(attribute='name') %}
+          <option {% if ingr_con.ingredient_type.id == ingredient_type.id %}selected{% endif %} value="{{ ingredient_type.id }}">{{ ingredient_type.name }}</option>
+          {% endfor %}
+        </select>
+        <label for="floatingNameGroupType">Группа</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <select name="input_ingredient_id" class="form-select" id="floatingNameIngredient" aria-label="" required>
+          {% for ingredient in ingredients | sort(attribute='name') %}
+          <option {% if ingr_con.ingredient.id == ingredient.id %}selected{% endif %} value="{{ ingredient.id }}">{{ ingredient.name }} ({{ ingredient.measurement.name }})</option>
+          {% endfor %}
+        </select>
+        <label for="floatingNameIngredient">Ингредиент</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input name="input_ingredient_qty" type="text" class="form-control" id="floatingQtyIngredient" value="{{ request.form['input_ingredient_qty'] or ingr_con.qty }}" required>
+        <label for="floatingQtyIngredient">Необходимо</label>
+      </div>
+
+      <a href="{{ url_for('blog.update', id=recipe.id, _anchor='composite_table') }}" class="btn btn-outline-secondary"><< Назад</a>
+      <input type="submit" class="btn btn-success" value="Изменить">
+    </form>
+  </div>
+
+<section class="container text-center">
+</section>
+
+</main>
+{% endblock %}

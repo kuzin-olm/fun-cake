@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Ingredients{% endblock %}</h1>
+<!--  {% if g.user %}-->
+<!--    <a class="action" href="{{ url_for('blog.create') }}">New</a>-->
+<!--  {% endif %}-->
+{% endblock %}
+
+
+{% block content %}
+<main>
+  <section class="container text-center">
+  </section>
+
+  <div class="container">
+
+    <div class="row align-items-center mb-5">
+      <div class="col-8 col-xl-11">
+        <p class="h3">Список ингредиентов</p>
+      </div>
+      <div class="col-4 col-xl-1">
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addIngredientModal">добавить</button>
+      </div>
+    </div>
+
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-danger" role="alert">
+        {{ message | safe }}
+      </div>
+    {% endfor %}
+
+    <div class="table-responsive">
+      <table class="table table-hover caption-top">
+        <thead class="table-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Название</th>
+          <th scope="col">Фасовка</th>
+          <th scope="col">Цена</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for ingredient in ingredients %}
+        <tr>
+          <th scope="col">{{ loop.index }}</th>
+          <td>{{ ingredient.name }}</td>
+          <td>{{ ingredient.packing }} {{ ingredient.measurement.name }}</td>
+          <td>{{ '%0.2f' | format(ingredient.price | float) }}</td>
+          <td>
+            <a href="{{ url_for('ingredient.update', id=ingredient.id) }}" class="btn btn-sm btn-outline-secondary m-1 col">Изменить</a>
+            <a href="{{ url_for('ingredient.delete', id=ingredient.id) }}" class="btn btn-sm btn-outline-danger m-1" onclick="return confirm('Are you sure?');">Удалить</a>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+<section class="container text-center">
+</section>
+
+</main>
+
+
+
+<div class="modal fade" id="addIngredientModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Новый ингредиент</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{{ url_for('ingredient.newingredient') }}" method="post">
+        <div class="modal-body">
+
+          <div class="form-floating mb-1">
+            <input name="input_name" type="text" class="form-control" id="floatingNameIngredient" required>
+            <label for="floatingNameIngredient">Имя мое любимое твое</label>
+          </div>
+
+          <div class="form-floating mb-1">
+            <input name="input_packing" type="text" class="form-control" id="floatingPackingIngredient" required>
+            <label for="floatingPackingIngredient">Фасовка</label>
+          </div>
+
+          <div class="form-floating mb-1">
+            <select name="input_mass" class="form-select" id="floatingMassIngredient" aria-label="" required>
+              {% for measure in measurement %}
+              <option value="{{ measure.id }}">{{ measure.name }}</option>
+              {% endfor %}
+            </select>
+            <label for="floatingMassIngredient">Единица измерения</label>
+          </div>
+
+          <div class="form-floating mb-1">
+            <input name="input_price" type="text" class="form-control" id="floatingPriceIngredient" required>
+            <label for="floatingPriceIngredient">Цена</label>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addMassModal">Добавить ед.изм.</button>
+          <input type="submit" class="btn btn-success" value="Добавить">
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="addMassModal" tabindex="-1" aria-labelledby="ModalLabelMass" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabelMass">Новая единица измерения</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form action="{{ url_for('ingredient.newmass') }}" method="post">
+        <div class="modal-body">
+
+          <div class="form-floating mb-1">
+            <input name="input_name_mass" type="text" class="form-control" id="floatingNameMass" required>
+            <label for="floatingNameMass">Название</label>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-success" value="Добавить">
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

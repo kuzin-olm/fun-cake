@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap core CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
+
+        <style>
+          .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+          }
+
+          @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+              font-size: 3.5rem;
+            }
+          }
+        </style>
+
+
+        <!-- Custom styles for this template -->
+        <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
+        <title>{% block title %}{% endblock %} - FunCake</title>
+  </head>
+  <body class="text-center">
+    
+    <main class="container">
+      <div class="row form-signin justify-content-center">
+
+          {% block content %}{% endblock %}
+
+          {% for message in get_flashed_messages() %}
+          <div class="toast bg-danger text-white border-0 mt-2" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+                {{ message }}
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+          {% endfor %}
+
+          <div>
+            <p class="mt-5 mb-3 text-muted">&copy; FunCake 2021</p>
+          </div>
+      </div>
+
+    </main>
+
+  </body>
+
+<script>
+  var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+  var toastList = toastElList.map(function(toastEl) {
+  // Creates an array of toasts (it only initializes them)
+    return new bootstrap.Toast(toastEl) // No need for options; use the default options
+  });
+ toastList.forEach(toast => toast.show()); // This show them
+</script>
+
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ru" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="image/x-icon" rel="shortcut icon" href="{{ url_for('static', filename='imgs/favicon.ico') }}">
+    <link type="image/png" sizes="16x16" rel="icon" href="{{ url_for('static', filename='imgs/favicon-16x16.png') }}">
+    <link type="image/png" sizes="32x32" rel="icon" href="{{ url_for('static', filename='imgs/favicon-32x32.png') }}">
+    <link type="image/png" sizes="96x96" rel="icon" href="{{ url_for('static', filename='imgs/favicon-96x96.png') }}">
+    <link type="image/png" sizes="120x120" rel="icon" href="{{ url_for('static', filename='imgs/favicon-120x120.png') }}">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
+
+    <style>
+      @font-face {
+        font-family: rose;
+        src: url({{ url_for('static', filename='fonts/rose.ttf') }});
+      }
+
+      @font-face {
+        font-family: open-sans-bold;
+        src: url({{ url_for('static', filename='fonts/open-sans-bold.ttf') }});
+      }
+
+      @font-face {
+        font-family: open-sans-light;
+        src: url({{ url_for('static', filename='fonts/open-sans-light.ttf') }});
+      }
+
+      .logo {
+        font-family: rose;
+        font-weight: bolder;
+      }
+
+      body {
+        background-image: url({{ url_for('static', filename='imgs/funcake_bg.png') }});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position-x: center;
+      }
+
+
+      .btn {
+        border-radius: 10px!important;
+      }
+
+      .btn-primary {
+          color: #fffeff;
+          background-color: #454351;
+          border-color: #454351
+      }
+
+      .btn-primary:hover {
+          color: #454351;
+          background-color: #fffeff;
+          border-color: #454351;
+          box-shadow: 0 0.5rem 1rem rgba(69, 67, 81, 0.3) !important;
+      }
+
+      .btn-primary:focus,
+      .btn-primary.focus {
+          box-shadow: 0 0 0 .2rem rgba(69, 67, 81, 0.5)
+      }
+
+      .btn-check:focus + .btn-primary, .btn-primary:focus {
+        color: #454351;
+        background-color: #fffeff;
+        border-color: #454351;
+        box-shadow: 0 0 0 0.25rem rgba(69, 67, 81, 0.5);
+      }
+
+      .btn-primary.disabled,
+      .btn-primary:disabled {
+          color: #fffeff;
+          background-color: #454351;
+          border-color: #454351
+      }
+
+      .btn-primary:not(:disabled):not(.disabled):active,
+      .btn-primary:not(:disabled):not(.disabled).active,
+      .show>.btn-primary.dropdown-toggle {
+          color: #fffeff;
+          background-color: #454351;
+          border-color: #454351
+      }
+
+      .btn-primary:not(:disabled):not(.disabled):active:focus,
+      .btn-primary:not(:disabled):not(.disabled).active:focus,
+      .show>.btn-primary.dropdown-toggle:focus {
+          box-shadow: 0 0 0 .2rem rgba(69, 67, 81, 0.5)
+      }
+    </style>
+
+    <title>FunCake</title>
+  </head>
+
+
+  <body class="container">
+
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" style="color: #444251;">FunCake</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggler">
+            {% if g.user %}
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('ingredient.index') %}active{% endif %}" aria-current="page" href="{{ url_for('ingredient.index') }}">Ингредиенты</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('template_group_layer.index') %}active{% endif %}" aria-current="page" href="{{ url_for('template_group_layer.index') }}">Шаблоны групп</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('blog.create') %}active disabled{% endif %}" aria-current="page" href="{{ url_for('blog.create') }}">Новый рецепт</a>
+              </li>
+            </ul>
+
+            <div class="d-flex">
+              <a class="nav-link disabled" href="#" tabindex="-1">{{ g.user.name }}</a>
+              <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger m-1 my-sm-0">Выйти</a>
+            </div>
+
+            {% else %}
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+            <div class="d-flex">
+              <a href="{{ url_for('auth.login') }}" class="btn btn-outline-success m-1 my-sm-0">Вход</a>
+            </div>
+
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+    </header>
+
+
+    <main>
+      <div class="row align-items-center text-center" style="height: 30rem;">
+        <div class="col-12 col-md-5">
+          <div>
+            <img src="{{ url_for('static', filename='imgs/home_cake.png') }}" class="img-fluid w-75" alt="...">
+          </div>
+        </div>
+        <div class="col-12 col-md-7">
+          <div>
+            <h1 class="my-2 logo" style="font-size: 4rem; color: #444251;">Fun Cake</h1>
+            <h5 class="my-2" style="font-family: open-sans-bold; color: #444251;">Больше, чем просто торт</h5>
+            <a href="{{ url_for('blog.index') }}" class="btn btn-primary m-2">Смотреть каталог</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row align-items-center text-center" style="height: 15rem;">
+        <div class="col-12 offset-12">
+          <div>
+            <h2 class="my-3" style="font-family: open-sans-bold; color: #444251;">Обо мне</h2>
+            <h6 class="my-2" style="font-family: open-sans-light; color: #444251;">Привет! Меня зовут <strong>Наталья</strong>, я домашний кондитер в Перми.</h6>
+            <h6 class="my-2" style="font-family: open-sans-light; color: #444251;">В приготовлении использую <strong>только натуральные и свежие</strong> ингредиенты.</h6>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </body>
+</html>

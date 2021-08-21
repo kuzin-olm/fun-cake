@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Update group layer{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+<main>
+    <section class="container text-center">
+    </section>
+
+    <div class="container">
+
+        <div class="row align-items-center mb-5">
+            <div class="col-7 col-xl-10">
+                <p class="h3">Редактирование "{{ group.name }}"</p>
+            </div>
+            <div class="col-5 col-xl-2">
+                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addTemplateGroupModal">добавить ингредиент</button>
+            </div>
+        </div>
+
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-danger" role="alert">
+            {{ message | safe }}
+        </div>
+        {% endfor %}
+
+
+        <table class="table table-hover caption-top">
+            <thead class="table-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ингредиент</th>
+                <th scope="col">Кол-во</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for ing_cons in group.ingredient_consistency %}
+            <tr>
+                <th scope="col">{{ loop.index }}</th>
+                <td>{{ ing_cons.ingredient.name }}</td>
+                <td>{{ ing_cons.qty }} {{ ing_cons.ingredient.measurement.name }}</td>
+                <td><a href="{{ url_for('template_group_layer.del_ing_from_template', template_id=group.id, ing_id=ing_cons.id) }}" class="btn btn-sm btn-outline-danger m-1" onclick="return confirm('точно?');">Удалить</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <section class="container text-center">
+    </section>
+
+</main>
+
+
+<div class="modal fade" id="addTemplateGroupModal" tabindex="-1" aria-labelledby="ModalLabelTemplateGroup" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabelTemplateGroup">Ингредиент</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{ url_for('template_group_layer.edit_template', id=group.id) }}" method="post">
+                <div class="modal-body">
+
+                    <div class="form-floating mb-2">
+                        <select name="input_ingredient_id" class="form-select" id="floatingNameIngredient" aria-label="" required>
+                            {% for ingredient in ingredients | sort(attribute='name') %}
+                            <option value="{{ ingredient.id }}">{{ ingredient.name }} ({{ ingredient.measurement.name }})</option>
+                            {% endfor %}
+                        </select>
+                        <label for="floatingNameIngredient">Ингредиент</label>
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        <input name="input_ingredient_qty" type="text" class="form-control" id="floatingQtyIngredient" value="" required>
+                        <label for="floatingQtyIngredient">Кол-во</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-success" value="Добавить">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

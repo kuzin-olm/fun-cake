@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ru" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="image/x-icon" rel="shortcut icon" href="{{ url_for('static', filename='imgs/favicon.ico') }}">
+    <link type="image/png" sizes="16x16" rel="icon" href="{{ url_for('static', filename='imgs/favicon-16x16.png') }}">
+    <link type="image/png" sizes="32x32" rel="icon" href="{{ url_for('static', filename='imgs/favicon-32x32.png') }}">
+    <link type="image/png" sizes="96x96" rel="icon" href="{{ url_for('static', filename='imgs/favicon-96x96.png') }}">
+    <link type="image/png" sizes="120x120" rel="icon" href="{{ url_for('static', filename='imgs/favicon-120x120.png') }}">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
+<!--    <script src="{{ url_for('static', filename='js/jquery-3.6.0.slim.min.js') }}"></script>-->
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      /*@media (min-width: 768px) {*/
+      /*  .bd-placeholder-img-lg {*/
+      /*    font-size: 3.5rem;*/
+      /*  }*/
+      /*}*/
+
+       /*body {*/
+       /* background-image: url({{ url_for('static', filename='imgs/funcake_bg.png') }});*/
+       /* background-size: cover;*/
+       /* background-repeat: no-repeat;*/
+       /* background-position-x: center;*/
+       /*}*/
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/sticky-footer-navbar.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/funcake.css') }}" rel="stylesheet">
+
+    <title>FunCake - {% block title %}{% endblock %}</title>
+  </head>
+
+
+  <body>
+  <header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="nav">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('blog.index') }}">
+          FunCake</a>
+        <button onclick="bg_nav()" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+          {% if g.user %}
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="f-a nav-link {% if request.path == url_for('ingredient.index') %}active{% endif %}" aria-current="page" href="{{ url_for('ingredient.index') }}">Ингредиенты</a>
+            </li>
+            <li class="nav-item">
+              <a class="f-a nav-link {% if request.path == url_for('template_group_layer.index') %}active{% endif %}" aria-current="page" href="{{ url_for('template_group_layer.index') }}">Шаблоны групп</a>
+            </li>
+            <li class="nav-item">
+              <a class="f-a nav-link {% if request.path == url_for('blog.create') %}active disabled{% endif %}" aria-current="page" href="{{ url_for('blog.create') }}">Новый рецепт</a>
+            </li>
+          </ul>
+
+          <div class="d-flex">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ g.user.name }}</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger m-1 my-sm-0">Выйти</a>
+          </div>
+
+          {% else %}
+
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+          <div class="d-flex">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-success m-1 my-sm-0">Авторизация</a>
+          </div>
+
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </header>
+
+{% block content %}{% endblock %}
+
+
+
+  <footer class="footer fixed-bottom mt-auto py-3 bg-light shadow">
+    <div class="container-xl">
+      <span class="text-muted">Маленький тортик - большая радость.
+      <a href="" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Обо мне.</a>
+      </span>
+    </div>
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomLabel">Обо мне</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body small">
+
+        <p class="fs-6">Доброго времени суток!</p>
+        <p class="fs-6">
+          Меня зовут Наталья, я из Перми, и мое хобби - делать тортики. Со мной можно связаться через <a href="https://www.instagram.com/natalia_n.n_/">Instagram</a>.
+        </p>
+
+      </div>
+    </div>
+  </footer>
+
+  </body>
+
+  <script >
+    window.addEventListener("scroll", (event) => {
+      if (this.scrollY > 15){
+        document.getElementById("nav").classList.add("nav-color");
+        document.getElementById("nav").classList.add("shadow-sm");
+      } else {
+        document.getElementById("nav").classList.remove("nav-color");
+        document.getElementById("nav").classList.remove("shadow-sm");
+      }
+    });
+
+    function bg_nav() {
+      document.getElementById("nav").classList.add("nav-color");
+      document.getElementById("nav").classList.add("shadow-sm");
+    }
+  </script>
+
+</html>

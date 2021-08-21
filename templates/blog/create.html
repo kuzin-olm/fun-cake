@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Новый рецепт{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<main>
+  <section class="container text-center">
+  </section>
+
+  <div class="container">
+    <h1 class="h1 text-center">Новый рецепт</h1>
+    <form action="{{ url_for('blog.create') }}" method="post" enctype="multipart/form-data" class="was-validated">
+
+      <div class="mb-3">
+        <label for="inputTitle" class="form-label">
+          <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+          Название рецепта/торта
+        </label>
+        <input name="title" type="text" class="form-control" id="inputTitle" placeholder="Заголовок" value="{{ request.form['title'] }}" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="inputAbout" class="form-label">
+          <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+          Краткое описание для превью
+        </label>
+        <textarea name="about" class="form-control" id="inputAbout" rows="3" placeholder="Коротко о главном" required>{{ request.form['about'] }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="inputRecipe" class="form-label">
+          <img src="{{ url_for('static', filename='imgs/eye_hide.png') }}" alt="" width="17" height="10">
+          Рецепт
+        </label>
+        <textarea name="body" class="form-control" id="inputRecipe" rows="3" placeholder="Подробности о рецепте" required>{{ request.form['body'] }}</textarea>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-xl-4 mb-3">
+          <label for="forPrewImage" class="form-label">
+            <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+            Превью (главное фото)
+          </label>
+          <input name="prew_image" type="file" class="form-control" id="forPrewImage" accept="image/*">
+        </div>
+
+        <div class="col-xl-4 mb-3">
+          <label for="forOtherImages" class="form-label">
+            <img src="{{ url_for('static', filename='imgs/eye.png') }}" alt="" width="17" height="10">
+            Дополнительные фото
+          </label>
+          <input name="other_image" type="file" class="form-control" id="forOtherImages" accept="image/*" multiple>
+        </div>
+
+        <div class="col-xl-4 mb-3">
+          <label for="forDocs" class="form-label">
+            <img src="{{ url_for('static', filename='imgs/eye_hide.png') }}" alt="" width="17" height="10">
+            Документы
+          </label>
+          <input name="docs_file" type="file" class="form-control" id="forDocs" accept=".doc,.docx,.pdf" multiple>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-4 mb-3">
+          <div class="form-floating">
+            <select name="to_trade" class="form-select" id="stateTrade" aria-label="">
+              <option selected value="0">Не выставлять</option>
+              <option value="1">Выставить</option>
+            </select>
+            <label for="stateTrade">Выставить, чтоб видели все?</label>
+          </div>
+        </div>
+
+        <div class="col-xl-4 ">
+          <div class="form-floating">
+            <input name="profit" type="text" class="form-control" id="profitRecipe" value="2" required>
+            <label for="profitRecipe">Профит с продажи, т.е. price x N, где N =</label>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="my-4">
+        <input class="btn btn-success m-1" type="submit" value="Создать">
+      </div>
+
+    </form>
+  </div>
+
+  <section class="container text-center">
+  </section>
+</main>
+{% endblock %}

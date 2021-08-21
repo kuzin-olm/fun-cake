@@ -1,0 +1,139 @@
+body {
+    background-image: url("/static/imgs/funcake_bg_main.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-x: center;
+}
+
+@font-face {
+    font-family: rose;
+    src: url("/static/fonts/rose.ttf");
+}
+
+@font-face {
+    font-family: open-sans-bold;
+    src: url("/static/fonts/open-sans-bold.ttf");
+}
+
+@font-face {
+    font-family: open-sans-light;
+    src: url("/static/fonts/open-sans-light.ttf");
+}
+
+.f-text-bold {
+    font-family: open-sans-bold;
+    color: #444251;
+}
+
+.f-text-light {
+    /*font-family: open-sans-light;*/
+    color: #444251;
+}
+
+.nav-color{
+    background-color: #e9e8ee;
+ }
+
+.navbar-brand {
+    color: #444251;
+    font-family: rose;
+    font-weight: bolder;
+    font-size: 1.6rem;
+}
+
+.navbar-brand:hover {
+    color: #4a306f;
+}
+
+A.f-a {
+    color: #444251;
+}
+A.f-a:link {
+    text-decoration: none; /* Убирает подчеркивание для ссылок */
+    color: #444251;
+}
+A.f-a:visited { text-decoration: none; color: #444251; }
+A.f-a:active { text-decoration: none; color: #444251; }
+A.f-a:hover {
+    /*border-bottom: 3px solid; !* Делает ссылку подчеркнутой при наведении на нее курсора *!*/
+    color: #444251; /* Цвет ссылки */
+}
+
+a.f-a.nav-link.active::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: #444251;
+}
+
+a.f-a.nav-link.disabled {
+    color: rgba(68, 66, 81, 0.6); /* Цвет ссылки */
+}
+
+A.f-a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 3px;
+    background: #444251;
+    transition: width .3s;
+}
+
+A.f-a:hover::after {
+    width: 100%;
+    transition: width .3s;
+}
+
+.shadow-lg-cake {
+  box-shadow: 0 1rem 3rem rgba(69, 67, 81, 0.3) !important;
+}
+
+.btn-cake {
+    color: #454351;
+    background-color: #fffeff;
+    border-color: #454351;
+    border-radius: 10px!important;
+    box-shadow: 0 0.5rem 1rem rgba(69, 67, 81, 0.3) !important;
+}
+
+.btn-cake:hover {
+    color: #fffeff;
+    background-color: #454351;
+    border-color: #454351;
+    /*box-shadow: 0 0.5rem 1rem rgba(69, 67, 81, 0.3) !important;*/
+    box-shadow: 0 0.5rem 1rem rgba(255, 255, 255, 0) !important;
+}
+
+.btn-cake:focus,
+.btn-cake.focus {
+    box-shadow: 0 0 .2rem rgba(69, 67, 81, 0.5)
+}
+
+.btn-cake:focus + .btn-cake, .btn-cake:focus {
+    color: #454351;
+    background-color: #fffeff;
+    border-color: #454351;
+    box-shadow: 0 0 0.25rem rgba(69, 67, 81, 0.5);
+}
+
+.btn-cake.disabled,
+.btn-cake:disabled {
+    color: #fffeff;
+    background-color: rgba(69, 67, 81, 0.65);
+    border-color: #454351
+}
+
+.btn-cake:not(:disabled):not(.disabled):active,
+.btn-cake:not(:disabled):not(.disabled).active,
+.show>.btn-cake.dropdown-toggle {
+    color: #fffeff;
+    background-color: #454351;
+    border-color: #454351
+}
+
+.btn-cake:not(:disabled):not(.disabled):active:focus,
+.btn-cake:not(:disabled):not(.disabled).active:focus,
+.show>.btn-cake.dropdown-toggle:focus {
+    box-shadow: 0 0 .2rem rgba(69, 67, 81, 0.5)
+}

@@ -1,0 +1,32 @@
+{% extends 'base_auth.html' %}
+
+{% block header %}
+  <h1>{% block title %}Register{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <div class="col-xl-4 offset-xl-4">
+      <a class="navbar-brand" href="{{ url_for('blog.index') }}">
+        <img class="mb-4" src="{{ url_for('static', filename='imgs/cake_logo.png') }}" alt="" width="72" height="57">
+      </a>
+      <h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+    </div>
+
+    <div class="col-xl-4 offset-xl-4 form-floating">
+      <input type="text" class="form-control" id="username" placeholder="username" name="username" value="{{ request.form['username'] }}">
+      <label for="username">Имя пользователя</label>
+    </div>
+
+    <div class="col-xl-4 offset-xl-4 form-floating">
+      <input type="password" class="form-control" id="password" placeholder="password" name="password">
+      <label for="password">Пароль</label>
+    </div>
+
+    <div class="col-xl-4 offset-xl-4">
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрировать</button>
+    </div>
+
+  </form>
+{% endblock %}
+

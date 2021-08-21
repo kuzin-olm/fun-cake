@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Recipes{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+<main>
+  <section class="container text-center">
+    <figure class="text-center pt-4">
+      <blockquote class="blockquote">
+        <p style="color: #444251;">Шоколадный с шоколадом. С шоколадной начинкой и шоколадной крошкой сверху. И чашечка горячего шоколада рядом.</p>
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        Дженсен Эклз <cite title="Source Title">американский актер и режиссер, певец 1978</cite>
+      </figcaption>
+    </figure>
+  </section>
+
+  {% if recipes %}
+  <div class="album py-5">
+    <div class="container-xl">
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+
+
+        {% for recipe, prew_logo in recipes if recipe.to_trade or g.user %}
+          <div class="col" id="recipe-{{ recipe.id }}">
+            <div class="card shadow-sm">
+              <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>{{ recipe.name }}</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+                <image xlink:href="{{ prew_logo }}" width="100%" height="225" preserveAspectRatio="xMidYMid slice"/>
+              </svg>
+
+              <div class="card-body">
+                <h5 class="card-title f-text-bold">{{ recipe.name | truncate(30) }}</h5>
+                <p class="card-text f-text-light">{{ recipe.text_about | truncate(125) | e }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <a href="{{ url_for('blog.view', id=recipe.id) }}" class="btn btn-sm btn-outline-secondary">Смотреть</a>
+                    {% if g.user %}
+                    <a href="{{ url_for('blog.update', id=recipe.id) }}" class="btn btn-sm btn-outline-secondary">Изменить</a>
+                    <!--<a href="{{ url_for('blog.delete', id=recipe.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Удалить</a>-->
+                    {% endif %}
+                  </div>
+
+                  {% if g.user %}
+                  <small class="text-muted">{% if recipe.to_trade %}Видно{% else %}Не видно{% endif %}</small>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% if loop.last %}
+          {% endif %}
+
+        {% endfor %}
+
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+<section class="container text-center">
+</section>
+
+</main>
+{% endblock %}

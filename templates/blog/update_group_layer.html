@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Update group from recipe{% endblock %}</h1>
+<!--  {% if g.user %}-->
+<!--    <a class="action" href="{{ url_for('blog.create') }}">New</a>-->
+<!--  {% endif %}-->
+{% endblock %}
+
+
+{% block content %}
+<main>
+    <section class="container text-center">
+    </section>
+
+    <div class="container">
+
+        <div class="row align-items-center mb-5">
+            <div class="col">
+                <p class="h3 text-center">Редактирование группы {{ group.name }}.</p>
+            </div>
+        </div>
+
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-danger" role="alert">
+            {{ message | safe }}
+        </div>
+        {% endfor %}
+
+        <form action="{{ url_for('blog.edit_type_consistency', recipe_id=recipe_id, group_id=group.id) }}" method="post">
+
+            <div class="form-floating mb-2">
+                <input name="input_group_name" type="text" class="form-control" id="floatingGroupName" value="{{ request.form['input_group_name'] or group.name }}" required>
+                <label for="floatingGroupName">Название группы</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input name="input_group_diameter" type="text" class="form-control" id="floatingGroupDiameter" value="{{ request.form['input_group_diameter'] or group.diameter }}" required>
+                <label for="floatingGroupDiameter">Диаметр</label>
+            </div>
+
+            <a href="{{ url_for('blog.update', id=recipe_id, _anchor='group-layer-{}'.format(group.id)) }}" class="btn btn-outline-secondary"><< Назад</a>
+            <input type="submit" class="btn btn-success" value="Изменить">
+        </form>
+    </div>
+
+    <section class="container text-center">
+    </section>
+
+</main>
+{% endblock %}

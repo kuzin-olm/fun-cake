@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Templates group layer{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+<main>
+    <section class="container text-center">
+    </section>
+
+    <div class="container">
+
+        <div class="row align-items-center mb-5">
+            <div class="col-8 col-xl-11">
+                <p class="h3">Шаблоны групп</p>
+            </div>
+            <div class="col-4 col-xl-1">
+                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addTemplateGroupModal">добавить</button>
+            </div>
+        </div>
+
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-danger" role="alert">
+            {{ message | safe }}
+        </div>
+        {% endfor %}
+
+
+
+        <div class="accordion accordion-flush" id="accordionFlushTable">
+            {% for group in groups | sort(attribute='name') %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-heading{{ loop.index }}">
+                    <button class="accordion-button collapsed btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ loop.index }}" aria-expanded="false" aria-controls="flush-collapse{{ loop.index }}">
+                        <strong>{{ group.name }}</strong>
+                    </button>
+                </h2>
+                <div id="flush-collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ loop.index }}" data-bs-parent="#accordionFlushTable">
+                    <div class="accordion-body">
+                        <a href="{{ url_for('template_group_layer.edit_template', id=group.id) }}" class="btn btn-sm btn-outline-secondary m-1 col">Редактировать группу</a>
+                        <a href="{{ url_for('template_group_layer.delete_template', id=group.id) }}" class="btn btn-sm btn-outline-danger m-1 col" onclick="return confirm('точно?');">Удалить группу</a>
+
+                        <table class="table table-hover caption-top">
+                            <thead class="table-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Ингредиент</th>
+                                <th scope="col">Кол-во</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for ing_cons in group.ingredient_consistency %}
+                            <tr>
+                                <th scope="col">{{ loop.index }}</th>
+                                <td>{{ ing_cons.ingredient.name }}</td>
+                                <td>{{ ing_cons.qty }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+
+    </div>
+
+    <section class="container text-center mt-5">
+    </section>
+
+</main>
+
+
+<div class="modal fade" id="addTemplateGroupModal" tabindex="-1" aria-labelledby="ModalLabelTemplateGroup" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabelTemplateGroup">Новый шаблон</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{ url_for('template_group_layer.new') }}" method="post">
+                <div class="modal-body">
+
+                    <div class="form-floating mb-1">
+                        <input name="input_name_group" type="text" class="form-control" id="floatingNameTemplateGroup" required>
+                        <label for="floatingNameTemplateGroup">Название шаблона</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-success" value="Добавить">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
