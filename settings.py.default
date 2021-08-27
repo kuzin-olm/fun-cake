@@ -1,0 +1,5 @@
+import os
+
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+SECRET_KEY = 'dev'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///flaskr.db'
