@@ -85,9 +85,14 @@ A.f-a:hover::after {
     transition: width .3s;
 }
 
+.btn {
+    border-radius: 10px !important;
+}
+
 .shadow-lg-cake {
   box-shadow: 0 1rem 3rem rgba(69, 67, 81, 0.3) !important;
 }
+
 
 .btn-cake {
     color: #454351;
