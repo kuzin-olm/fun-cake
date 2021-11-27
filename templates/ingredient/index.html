@@ -48,7 +48,7 @@
           <th scope="col">{{ loop.index }}</th>
           <td>{{ ingredient.name }}</td>
           <td>{{ ingredient.packing }} {{ ingredient.measurement.name }}</td>
-          <td>{{ '%0.2f' | format(ingredient.price | float) }}</td>
+          <td class="{% if ingredient.price == 0 %}table-danger{% endif %}">{{ '%0.2f' | format(ingredient.price | float) }}</td>
           <td>
             <a href="{{ url_for('ingredient.update', id=ingredient.id) }}" class="btn btn-sm btn-outline-secondary m-1 col">Изменить</a>
             <a href="{{ url_for('ingredient.delete', id=ingredient.id) }}" class="btn btn-sm btn-outline-danger m-1" onclick="return confirm('Are you sure?');">Удалить</a>

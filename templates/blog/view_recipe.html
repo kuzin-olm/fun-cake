@@ -108,9 +108,9 @@
                             {% if ing_con.ingredient %}
                               {% set cost = ing_con.ingredient.price / ing_con.ingredient.packing * ing_con.qty %}
                               {% if total_cost_group.append(cost) %}{% endif %}
-                              <td>{{ '%0.2f' | format(cost) }}</td>
+                              <td class="{% if cost == 0 %}table-danger{% endif %}">{{ '%0.2f' | format(cost) }}</td>
                             {% else %}
-                              <td>0</td>
+                              <td class="table-danger">0</td>
                             {% endif %}
                           </tr>
                           {% endfor %}
