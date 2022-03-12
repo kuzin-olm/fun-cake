@@ -47,7 +47,11 @@
           {% endfor %}
 
           <div>
-            <p class="mt-5 mb-3 text-muted">&copy; FunCake 2021</p>
+            {% if now %}
+            <p class="mt-5 mb-3 text-muted">&copy; FunCake 2021 - {{ now.year }}</p>
+            {% else %}
+            <p class="mt-5 mb-3 text-muted">&copy; FunCake</p>
+            {% endif %}
           </div>
       </div>
 

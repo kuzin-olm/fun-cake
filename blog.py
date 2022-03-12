@@ -71,7 +71,7 @@ def get_recipe(id, check_author=False):
 @bp.route('/')
 def index():
 
-    recipes = Recipe.query.order_by(desc(Recipe.update_date)).all()
+    recipes = Recipe.query.order_by(desc(Recipe.id)).all()
     if len(recipes) != 0:
 
         prew_images = []

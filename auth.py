@@ -1,4 +1,5 @@
 import functools
+import datetime as dt
 import uuid
 
 from flask import (
@@ -24,6 +25,7 @@ def login_required(view):
 
 # @bp.route('/register', methods=('GET', 'POST'))
 # def register():
+#     now = dt.datetime.now()
 #     if request.method == 'POST':
 #         username = request.form['username']
 #         password = request.form['password']
@@ -47,11 +49,13 @@ def login_required(view):
 #
 #         flash(error)
 #
-#     return render_template('auth/register.html')
+#     return render_template('auth/register.html', now=now)
 
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    now = dt.datetime.now()
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -71,7 +75,7 @@ def login():
 
         flash(error)
 
-    return render_template('auth/login.html')
+    return render_template('auth/login.html', now=now)
 
 
 @bp.before_app_request
