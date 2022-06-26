@@ -1,16 +1,21 @@
 import os
 import datetime
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
+
 from werkzeug.exceptions import abort
+
 from sqlalchemy.orm.session import make_transient
 from sqlalchemy import desc
-
 
 from flaskr.auth import login_required
 from flaskr.models import db, Recipe, File, IngredientConsistencyType, TemplateGroupLayer
 from flaskr.settings import STATIC_ROOT
+
+from .services import resize_img
+
 
 bp = Blueprint('blog', __name__, url_prefix='/cake')
 
@@ -25,7 +30,18 @@ def save_file(file, save_to, key):
     date = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')
     if file.filename != '':
         filename_now = f'{date}_{file.filename}'
-        file.save(os.path.join(save_to, filename_now))
+
+        path_to_save = os.path.join(save_to, filename_now)
+        file.save(path_to_save)
+
+        try:
+            extension = path_to_save.split(".")[-1]
+
+            if extension.lower() in ("png", "jpg", "jpeg",):
+                resize_img(image_path=path_to_save, max_width=1280, max_height=1280)
+        except Exception:
+            pass
+
         return File(name=filename_now, belong=key)
     return None
 
@@ -59,7 +75,7 @@ def delete_files(from_recipe, key=None):
 def get_recipe(id, check_author=False):
     recipe = Recipe.query.filter_by(id=id).one_or_none()
 
-    if recipe is None:
+    if recipe is None or (not recipe.to_trade and not g.user):
         abort(404, f"Такой рецепт с id={id} не существует.")
 
     # if check_author and recipe['author_id'] != g.user['id']:
@@ -71,7 +87,11 @@ def get_recipe(id, check_author=False):
 @bp.route('/')
 def index():
 
-    recipes = Recipe.query.order_by(desc(Recipe.id)).all()
+    if g.user:
+        recipes = Recipe.query.order_by(desc(Recipe.id)).all()
+    else:
+        recipes = Recipe.query.order_by(desc(Recipe.id)).filter(Recipe.to_trade).all()
+
     if len(recipes) != 0:
 
         prew_images = []
