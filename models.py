@@ -13,7 +13,7 @@ metadata = MetaData(
 )
 db = SQLAlchemy(metadata=metadata)
 
-LAZY_LOAD = 'joined'
+LAZY_LOAD = 'select'
 
 
 class User(db.Model):
@@ -135,6 +135,7 @@ class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     text_about = db.Column(db.String, default='')
+    # text_description = db.Column(db.String, default='')
     text_recipe = db.Column(db.String, default='')
     # флаг готовности к продаже
     to_trade = db.Column(db.Boolean, nullable=False, default=False)
