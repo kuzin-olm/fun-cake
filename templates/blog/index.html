@@ -26,6 +26,26 @@
     </figure>
   </section>
 
+  {% if g.user %}
+  <div class="container-xl">
+    <form class="row" action="{{ url_for('blog.index') }}" method="get">
+      <div class="mb-3 col-sm-8">
+        <input class="form-control" type="search" name="q" placeholder="Поиск по рецептам" aria-label="Search" value="{{ request.args['q'] }}">
+      </div>
+      <div class="mb-3 col-sm-2">
+        <select class="form-select" type="search" name="trade" aria-label="Search">
+          <option {% if request.args['trade'] == "all" %}selected{% endif %} value="all">Все</option>
+          <option {% if request.args['trade'] == "true" %}selected{% endif %} value="true">Продаются</option>
+          <option {% if request.args['trade'] == "false" %}selected{% endif %} value="false">Не продаются</option>
+        </select>
+      </div>
+      <div class="mb-3 col-sm-2 d-grid">
+        <button class="btn btn-outline-success" type="submit">Поиск</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
   {% if recipes %}
   <div class="album py-5">
     <div class="container-xl">

@@ -8,7 +8,7 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from sqlalchemy.orm.session import make_transient
-from sqlalchemy import desc
+from sqlalchemy import desc, or_
 
 from flaskr.auth import login_required
 from flaskr.models import db, Recipe, File, IngredientConsistencyType, TemplateGroupLayer
@@ -88,10 +88,24 @@ def get_recipe(id, check_author=False):
 def index():
 
     if g.user:
-        recipes = Recipe.query.order_by(desc(Recipe.id)).all()
+        recipes = Recipe.query.order_by(desc(Recipe.id))
     else:
-        recipes = Recipe.query.order_by(desc(Recipe.id)).filter(Recipe.to_trade).all()
+        recipes = Recipe.query.order_by(desc(Recipe.id)).filter(Recipe.to_trade)
 
+    query_params = request.args.to_dict()
+
+    q = query_params.get("q")
+    if q:
+        if isinstance(q, str):
+            recipes = recipes.filter(or_(Recipe.name.contains(q), Recipe.text_about.contains(q)))
+
+    trade = query_params.get("trade")
+    if trade:
+        if isinstance(trade, str) and trade.lower() != "all":
+            _trade = trade.lower() == "true"
+            recipes = recipes.filter(Recipe.to_trade == _trade)
+
+    recipes = recipes.all()
     if len(recipes) != 0:
 
         prew_images = []
