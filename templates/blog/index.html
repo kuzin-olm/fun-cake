@@ -8,6 +8,14 @@
 {% block content %}
 <main>
   <section class="container text-center">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith  %}
+
     <figure class="text-center pt-4">
       <blockquote class="blockquote">
         <p style="color: #444251;">Шоколадный с шоколадом. С шоколадной начинкой и шоколадной крошкой сверху. И чашечка горячего шоколада рядом.</p>
