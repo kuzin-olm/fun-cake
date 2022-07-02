@@ -50,7 +50,7 @@ class Measurement(db.Model):
     )
 
     def __repr__(self):
-        return f'Measur: 1{self.name} = {self.ratio}г'
+        return f'Ед. измерения: {self.name}'
 
 
 class Ingredient(db.Model):
